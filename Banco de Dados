@@ -1,0 +1,26 @@
+CREATE TABLE escritorio (
+  id integer primary key,
+  nome_escritorio varchar(50),
+  );
+  
+CREATE TABLE funcionario_administrativo (
+  id integer primary key,
+  nome varchar(50),
+  salario decimal (10,2),
+  data_de_contratacao date,
+  escritorio integer,
+  foreign key (escritorio) REFERENCES escritorio(id)
+  );
+
+INSERT INTO escritorio (id, nome_escritorio) VALUES
+(1, 'Procurador'),
+(2, 'Filial Norte'),
+(3, 'Filial Sul');
+
+INSERT INTO funcionario_administrativo (id, nome, salario, data_de_contratacao, escritorio) VALUES
+(1, 'Joao Neves', 5000.00, '2020-01-15', 1),
+(2, 'Maria Albuquerque', 6000.00, '2019-05-20', 1),
+(3, 'Pedro Guilherme', 4500.00, '2021-03-10', 2),
+(4, 'Ana Oliveira', 5500.00, '2022-07-01', 3),
+(5, 'Bruno Fernandes', 7500.00, '2018-11-22', 1),
+(6, 'Fernando Diniz', 4800.00, '2023-02-28', 2);
