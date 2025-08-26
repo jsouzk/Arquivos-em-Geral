@@ -1,0 +1,105 @@
+-- ========================
+-- CRIAR TABELAS
+-- ========================
+
+CREATE TABLE Clientes (
+    id_cliente INT PRIMARY KEY AUTO_INCREMENT,
+    nome_cliente VARCHAR(50),
+    email VARCHAR(50) UNIQUE,
+    telefone VARCHAR(20),
+    endereco VARCHAR(100)
+);
+
+CREATE TABLE Produtos (
+    id_jogo INT PRIMARY KEY AUTO_INCREMENT,
+    nome_jogo VARCHAR(50),
+    genero VARCHAR(50),
+    plataforma VARCHAR(50),
+    preco DECIMAL(10,2),
+    estoque INT,
+    classificacao_etaria VARCHAR(10),
+    desenvolvedora VARCHAR(50),
+    descricao TEXT,
+    avaliacao_media DECIMAL(3,2)
+);
+
+CREATE TABLE Pedidos (
+    id_pedido INT PRIMARY KEY AUTO_INCREMENT,
+    id_cliente INT,
+    data_pedido DATE,
+    valor_total DECIMAL(10,2),
+    status_pedido VARCHAR(20),
+    forma_pagamento VARCHAR(50),
+    FOREIGN KEY (id_cliente) REFERENCES Clientes(id_cliente)
+);
+
+CREATE TABLE Itens_Jogo (
+    id_item INT PRIMARY KEY AUTO_INCREMENT,
+    id_pedido INT,
+    id_jogo INT,
+    quantidade INT,
+    preco_unitario DECIMAL(10,2),
+    FOREIGN KEY (id_pedido) REFERENCES Pedidos(id_pedido),
+    FOREIGN KEY (id_jogo) REFERENCES Produtos(id_jogo)
+);
+
+-- ========================
+-- INSERIR DADOS DE EXEMPLO
+-- ========================
+
+-- Clientes
+INSERT INTO Clientes (nome_cliente, email, telefone, endereco) VALUES
+('João Silva', 'joao@email.com', '11999999999', 'Rua A, 123'),
+('Maria Souza', 'maria@email.com', '21988888888', 'Av. Central, 456');
+
+-- Produtos (Jogos)
+INSERT INTO Produtos (nome_jogo, genero, plataforma, preco, estoque, classificacao_etaria, desenvolvedora, descricao, avaliacao_media) VALUES
+('The Witcher 3', 'RPG', 'PC', 120.00, 10, '18+', 'CD Projekt', 'RPG de mundo aberto com Geralt de Rivia', 4.9),
+('FIFA 25', 'Esportes', 'PS5', 350.00, 20, 'L', 'EA Sports', 'Simulação de futebol realista', 4.2),
+('Minecraft', 'Sandbox', 'Xbox', 100.00, 15, 'L', 'Mojang', 'Jogo de construção em blocos', 4.8);
+
+-- Pedido
+INSERT INTO Pedidos (id_cliente, data_pedido, valor_total, status_pedido, forma_pagamento) VALUES
+(1, '2025-08-26', 470.00, 'Pago', 'Pix');
+
+-- Itens do Pedido
+INSERT INTO Itens_Jogo (id_pedido, id_jogo, quantidade, preco_unitario) VALUES
+(1, 1, 1, 120.00), -- The Witcher 3
+(1, 2, 1, 350.00); -- FIFA 25
+
+-- ========================
+-- CONSULTAR PRODUTOS
+-- ========================
+SELECT id_jogo, nome_jogo, genero, plataforma, preco, estoque, avaliacao_media
+FROM Produtos;
+
+-- ========================
+-- CONSULTAR PEDIDOS DETALHADOS (JOIN)
+-- ========================
+SELECT 
+    c.nome_cliente,
+    p.id_pedido,
+    p.data_pedido,
+    pr.nome_jogo,
+    ij.quantidade,
+    ij.preco_unitario,
+    (ij.quantidade * ij.preco_unitario) AS subtotal,
+    p.valor_total,
+    p.status_pedido,
+    p.forma_pagamento
+FROM Clientes c
+JOIN Pedidos p ON c.id_cliente = p.id_cliente
+JOIN Itens_Jogo ij ON p.id_pedido = ij.id_pedido
+JOIN Produtos pr ON ij.id_jogo = pr.id_jogo
+ORDER BY p.id_pedido;
+
+-- ========================
+-- CONSULTAR RESUMO DE GASTOS POR CLIENTE
+-- ========================
+SELECT 
+    c.nome_cliente,
+    SUM(p.valor_total) AS total_gasto
+FROM Clientes c
+JOIN Pedidos p ON c.id_cliente = p.id_cliente
+GROUP BY c.nome_cliente
+ORDER BY total_gasto DESC;
