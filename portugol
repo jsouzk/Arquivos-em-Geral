@@ -1,55 +1,60 @@
-programa
-{
-    // Função que gera um número aleatório entre 1 e 100
-    funcao inteiro gerarNumeroAleatorio()
-    {
-        inteiro numero
-        numero <- inteiro(aleatorio() * 100) + 1
-        retorne numero
-    }
+algoritmo "Adivinhe_o_Numero"
 
-    funcao inicio()
-    {
-        inteiro secreto, tentativa, tentativas, i
-        logico acertou
-        vetor historico[5] de inteiro // guarda as últimas tentativas
+// Função que gera um número aleatório entre 1 e 100
+funcao inteiro gerarNumeroAleatorio()
+var
+    numero: inteiro
+inicio
+    numero <- inteiro(aleatorio() * 100) + 1
+    retorne numero
+fimalgoritmo
 
-        secreto <- gerarNumeroAleatorio()
-        tentativas <- 0
-        acertou <- falso
+var
+    secreto, tentativa, tentativas, i: inteiro
+    acertou: logico
+    historico: vetor[1..5] de inteiro
 
-        escreva("\n=== JOGO: ADIVINHE O NÚMERO ===\n")
-        escreva("Tente adivinhar o número entre 1 e 100!\n\n")
+inicio
+    secreto <- gerarNumeroAleatorio()
+    tentativas <- 0
+    acertou <- falso
 
-        enquanto (acertou = falso) e (tentativas < 5) faca
-        {
-            escreva("Tentativa ", tentativas + 1, ": ")
-            leia(tentativa)
+    escreval("=== JOGO: ADIVINHE O NÚMERO ===")
+    escreval("Tente adivinhar o número entre 1 e 100!")
+    escreval("Você tem 5 tentativas.")
+    escreval("")
 
-            historico[tentativas] <- tentativa
-            tentativas <- tentativas + 1
+    enquanto (acertou = falso) e (tentativas < 5) faca
+        escreva("Tentativa ", tentativas + 1, ": ")
+        leia(tentativa)
 
-            se (tentativa = secreto) entao
-                escreva("\nParabéns! Você acertou o número!\n")
-                acertou <- verdadeiro
+        historico[tentativas + 1] <- tentativa
+        tentativas <- tentativas + 1
+
+        se (tentativa = secreto) entao
+            escreval("")
+            escreval("Parabéns! Você acertou o número!")
+            acertou <- verdadeiro
+        senao
+            se (tentativa < secreto) entao
+                escreval("O número secreto é MAIOR!")
             senao
-                se (tentativa < secreto) entao
-                    escreva("O número secreto é MAIOR!\n\n")
-                senao
-                    escreva("O número secreto é MENOR!\n\n")
-                fimse
+                escreval("O número secreto é MENOR!")
             fimse
-        }
-
-        se (acertou = falso) entao
-            escreva("\nVocê perdeu! O número secreto era: ", secreto, "\n")
+            escreval("")
         fimse
+    fimenquanto
 
-        escreva("\n--- HISTÓRICO DE TENTATIVAS ---\n")
-        para (i <- 0; i < tentativas; i <- i + 1) faca
-            escreva("Tentativa ", i + 1, ": ", historico[i], "\n")
-        fimpara
+    se (acertou = falso) entao
+        escreval("Você perdeu! O número secreto era: ", secreto)
+    fimse
 
-        escreva("\nFim do jogo. Obrigado por jogar!\n")
-    }
-}
+    escreval("")
+    escreval("--- HISTÓRICO DE TENTATIVAS ---")
+    para i de 1 ate tentativas faca
+        escreval("Tentativa ", i, ": ", historico[i])
+    fimpara
+
+    escreval("")
+    escreval("Fim do jogo. Obrigado por jogar!")
+fimalgoritmo
